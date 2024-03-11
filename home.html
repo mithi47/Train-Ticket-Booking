@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Train Ticket Booking</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-image: url({% static 'images/train-detailed-drawing-cvdd2fs65wkxbyd9.jpg' %});
+    background-size: cover;
+    background-position: center;
+     background-attachment: fixed;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .container {
+    height: 100%;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    width: 500px;
+    transition: all 0.3s ease;
+    text-align:center;
+
+  }
+
+  .container:hover {
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  h1 {
+    font-size: 32px;
+    margin-bottom: 20px;
+  }
+
+
+  .btn {
+    background-color: #666;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+    margin: 10px;
+  }
+
+  .btn:hover {
+    background-color: #555;
+  }
+
+  .btn-register {
+    background-color: #999;
+  }
+
+  .btn-register:hover {
+    background-color: #888;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Train Ticket Booking Application</h1>
+  <a href="{% url 'registration' %}" class="btn btn-register">Register</a>
+  <a href="{% url 'user_login' %}" class="btn">Login</a>
+</div>
+
+</body>
+</html>

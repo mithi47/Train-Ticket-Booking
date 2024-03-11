@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height:100%;
+ background-image: url({% static 'images/train-detailed-drawing-cvdd2fs65wkxbyd9.jpg' %});
+    background-size: cover;
+    background-position: center;
+        background-attachment: fixed;
+
+
+     }
+
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        p, ul {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        strong {
+            color: #333;
+        }
+
+
+        button {
+    background-color: #555;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+        }
+        a{
+
+  background-color: #555;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+        }
+
+         a:hover {
+            background-color: #999;
+        }
+        button:hover {
+            background-color: #999;
+        }
+           #del:hover {
+            background-color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Booking Confirmation</h1>
+        <p>Hello, <strong>{{ booking.user.username }}</strong>!</p>
+        <p>Your booking details:</p>
+        <ul>
+            <li><strong>Train Number:</strong> {{ booking.train.train_number }}</li>
+            <li><strong>Train Name:</strong> {{ booking.train.name }}</li>
+            <li><strong>From:</strong> {{ booking.train.from_location }}</li>
+            <li><strong>To:</strong> {{ booking.train.to_location }}</li>
+            <li><strong>Departure Time:</strong> {{ booking.train.dep_time }}</li>
+            <li><strong>Arrival Time:</strong> {{ booking.train.arr_time }}</li>
+            <li><strong>Booking Date:</strong> {{ booking.booking_date }}</li>
+            <li><strong>Number of Seats Booked:</strong> {{ booking.seats|length }}</li>
+            <li><strong>Booked Seats:</strong> {{ booking.seats|join:", " }}</li>
+        </ul>
+        <button onclick="printBooking()">Print</button>
+        <br>
+         <br>
+          <a href="{% url 'booking_list' %}" class="btn btn-register">Check Your Bookings Here</a>
+        <br>
+        <br>
+
+        <form id="deleteForm" action="{% url 'delete_booking' booking.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" id="del" style="background-color:red;">Delete Booking</button>
+        </form>
+        <p>Thank you for booking with us!</p>
+    </div>
+
+    <script>
+        function printBooking() {
+            window.print();
+        }
+    </script>
+</body>
+</html>

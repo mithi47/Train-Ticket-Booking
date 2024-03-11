@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Train Ticket Booking</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+ background-image: url({% static 'images/train-detailed-drawing-cvdd2fs65wkxbyd9.jpg' %});
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+      width: 800px;
+      transition: all 0.3s ease;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container form {
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"], input[type="date"] {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    .btn {
+      background-color: #666;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      text-decoration: none;
+      margin: 10px;
+      align-content:right;
+    }
+
+    .btn:hover {
+      background-color: #555;
+    }
+
+    .btn-register {
+      background-color: #999;
+
+    }
+
+    .btn-register:hover {
+      background-color: #888;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+  </style>
+</head>
+<body>
+<div>
+  <div style="text-align:right">
+    <h1>Hi, {{user.username}}</h1>
+    <a href="{% url 'booking_list' %}" class="btn btn-register">Check Your Bookings Here</a>
+    <a href="{% url 'logout_user' %}" class="btn btn-register">Logout</a>
+  </div>
+  <br>
+
+  <div class="container">
+    <h1>Search for a Train</h1>
+    <!-- Display error message if exists -->
+    {% if error_message %}
+      <div id="error">
+        <p>{{ error_message }}</p>
+      </div>
+    {% endif %}
+
+    <form action="{% url 'search_train' %}" method="get">
+      <input type="text" name="from" placeholder="From" required>
+      <br>
+      <input type="text" name="to" placeholder="To" required>
+      <br>
+      <input type="date" name="date" required>
+      <br>
+      <button type="submit" class="btn btn-register">Search</button>
+    </form>
+
+    <!-- Display search results if available -->
+    {% if trains %}
+      <h2>Search Results</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Train Number</th>
+            <th>Train Name</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Departure Date</th>
+            <th>Departure Time</th>
+            <th>Arrival Time</th>
+            <th>Book Ticket</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for train in trains %}
+            <tr>
+              <td>{{ train.train_number }}</td>
+              <td>{{ train.name }}</td>
+              <td>{{ train.from_location }}</td>
+              <td>{{ train.to_location }}</td>
+              <td>{{ train.date }}</td>
+              <td>{{ train.dep_time }}</td>
+              <td>{{ train.arr_time }}</td>
+              <td><a href="{% url 'book' train.train_number %}" class="btn btn-register">Book</a></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </div>
+</div>
+</body>
+</html>

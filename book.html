@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seat Selection</title>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+ background-image: url({% static 'images/train-detailed-drawing-cvdd2fs65wkxbyd9.jpg' %});
+    background-size: cover;
+        background-attachment: fixed;
+
+        background-repeat:no-repeat ;
+    background-position;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
+  .bb
+  {
+  width = 100%;
+      align-item:center;
+
+  }
+
+  #seatSelection
+  {
+background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    width: 350px;
+        justify-content: center;
+        padding: 50px;
+    transition: all 0.3s ease;
+  }
+
+
+  .container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    width: 350px;
+    transition: all 0.3s ease;
+
+  }
+
+  .container:hover {
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+  }
+
+
+  button {
+    background-color: #555;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+    .btn {
+    background-color: #222;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+  text-align:center;
+  }
+
+  button:hover {
+    background-color: #333;
+  }
+
+      .class {
+        margin-bottom: 20px;
+    }
+
+    .class h2 {
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .seat {
+        width: 100px; /* Adjust width as needed */
+        height: 100px; /* Adjust height as needed */
+        margin: 5px;
+        background-color: grey; /* Default color for available seats */
+        border: none;
+        color: white;
+        font-size: 16px;
+    }
+
+    .booked {
+        background-color: red; /* Color for booked seats */
+    }
+
+    .selected {
+        background-color: green; /* Color for selected seats */
+    }
+    </style>
+</head>
+<body>
+<div class="bb">
+<div class="container">
+ <h1 >Book Tickets for Train {{ train.train_number }}</h1>
+    <p>Train Name: {{ train.name }}</p>
+    <p>From: {{ train.from_location }}</p>
+    <p>To: {{ train.to_location }}</p>
+    <p>Departure Date: {{ train.date }}</p>
+    <p>Departure Time: {{ train.dep_time }}</p>
+    <p>Arrival Time: {{ train.arr_time }}</p>
+
+
+
+  </div>
+    <br>
+    <br>
+    <form id="bookForm" action="{% url 'book_seat' %}" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="class_type" id="classTypeInput">
+        <input type="hidden" name="seat_numbers" id="seatNumbersInput">
+        <input type="hidden" name="train_id" value="{{ train.train_number }}">
+        <button type="submit" id="bookButton" style="display: none;" onclick="bookSelectedSeats()">Book Selected Seats</button>
+    </form>
+<h1 class="btn btn-register">Select Seats</h1>
+
+    <div id="seatSelection">
+
+        <!-- JavaScript will populate seats here -->
+    </div>
+</div>
+
+<script>
+const seatsPerPage = 30; // Number of seats to display per page
+let currentPage = 1; // Current page
+
+// Function to render seats for the current page
+function renderSeatsForPage(seats, page) {
+    seatSelection.innerHTML = ''; // Clear previous seats
+
+    const classes = ['Class1', 'Class2', 'Class3', 'Class4', 'Class5', 'Class6'];
+
+    // Render class header
+    const classHeaderDiv = document.createElement('div');
+    classHeaderDiv.classList.add('class-header');
+    classHeaderDiv.textContent = classes[page - 1];
+    seatSelection.appendChild(classHeaderDiv);
+
+    // Render seats for the current page
+    const startIndex = (page - 1) * seatsPerPage;
+    const endIndex = Math.min(page * seatsPerPage, seats.length);
+
+    for (let i = startIndex; i < endIndex; i++) {
+        const seat = seats[i];
+        const seatElement = document.createElement('button');
+        seatElement.classList.add('seat');
+        seatElement.textContent = seat.seat_number;
+
+        if (seat.is_booked) {
+            seatElement.classList.add('booked');
+        } else {
+            seatElement.classList.add('available');
+            seatElement.addEventListener('click', () => {
+                seatElement.classList.toggle('selected');
+                updateBookButtonVisibility();
+            });
+        }
+
+        seatSelection.appendChild(seatElement);
+    }
+
+    // Render pagination controls
+    renderPaginationControls(seats);
+}
+
+// Function to render pagination controls
+function renderPaginationControls(seats) {
+    const totalPages = Math.ceil(seats.length / seatsPerPage);
+
+    const paginationDiv = document.createElement('div');
+    paginationDiv.classList.add('pagination');
+
+    for (let i = 1; i <= totalPages; i++) {
+        const pageButton = document.createElement('button');
+        pageButton.textContent = i;
+        pageButton.addEventListener('click', () => {
+            currentPage = i;
+            renderSeatsForPage(seats, currentPage);
+            updatePaginationButtons();
+        });
+        paginationDiv.appendChild(pageButton);
+    }
+
+    seatSelection.appendChild(paginationDiv);
+}
+
+// Fetch seats for the selected train via AJAX
+const trainId = "{{ train.train_number }}";
+fetch(`/get_seats/${trainId}`)
+    .then(response => response.json())
+    .then(seats => {
+        renderSeatsForPage(seats, currentPage);
+    })
+    .catch(error => console.error('Error fetching seats:', error));
+
+      function updateBookButtonVisibility() {
+        const selectedSeats = document.querySelectorAll('.selected').length;
+        const bookButton = document.getElementById('bookButton');
+        if (selectedSeats > 0) {
+            bookButton.style.display = 'block';
+        } else {
+            bookButton.style.display = 'none';
+        }
+    }
+
+    function bookSelectedSeats() {
+        const selectedSeatElements = document.querySelectorAll('.selected');
+        const selectedSeatNumbers = Array.from(selectedSeatElements).map(seat => seat.textContent);
+        document.getElementById('classTypeInput').value = 'Class1';  // Set class type (change as needed)
+        document.getElementById('seatNumbersInput').value = selectedSeatNumbers.join(',');
+        document.getElementById('bookForm').submit();
+    }
+
+
+</script>
+
+</body>
+</html>

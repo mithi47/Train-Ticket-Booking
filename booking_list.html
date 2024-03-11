@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings</title>
+    <style>
+        /* Add your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            height:100%;
+            padding: 20px;
+ background-image: url({% static 'images/train-detailed-drawing-cvdd2fs65wkxbyd9.jpg' %});
+    background-size: cover;
+    background-position: center;
+        background-attachment: fixed;
+
+         }
+
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        .booking {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+       button {
+            background-color: #555;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+a{
+  background-color: #555;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+        }
+
+         a:hover {
+            background-color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My Bookings</h1>
+        {% if bookings %}
+            <ul>
+                {% for booking in bookings %}
+                    <li class="booking">
+                        <strong>Booking ID:</strong> {{ booking.id }}<br>
+                        <strong>Train Number:</strong> {{ booking.train.train_number }}<br>
+                        <strong>Train Name:</strong> {{ booking.train.name }}<br>
+                        <strong>From:</strong> {{ booking.train.from_location }}<br>
+                        <strong>To:</strong> {{ booking.train.to_location }}<br>
+                        <strong>Departure Time:</strong> {{ booking.train.dep_time }}<br>
+                        <strong>Arrival Time:</strong> {{ booking.train.arr_time }}<br>
+                        <strong>Booking Date:</strong> {{ booking.booking_date }}<br>
+                        <strong>Booked Seats:</strong> {{ booking.seats|join:", " }}<br>
+                          <form id="deleteForm" action="{% url 'delete_booking' booking.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" id="del" style="background-color:red;">Delete Booking</button>
+        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No bookings found.</p>
+        {% endif %}
+        <br>
+          <a href="{% url 'dash' %}" class="btn btn-register">Home</a>
+        <br>
+    </div>
+
+</body>
+</html>
